@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-# https://ngrok.com/docs#client-api
 
 
 from bs4 import BeautifulSoup	
