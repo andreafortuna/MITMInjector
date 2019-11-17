@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-
-
 from bs4 import BeautifulSoup	
 import json 
 import urllib, os, subprocess
@@ -58,10 +56,7 @@ def urlShortener(nurl):
 
 def start_ngrok():
 	result = subprocess.check_output(["./ngrok", "http", "8080"])
-	#output=urllib.urlopen("http://localhost:4040/api/").read()
-	#print (output)
-	print result
-
+	
 def getNgrokStats():
 	output=""
 	while output == "":
@@ -89,13 +84,13 @@ def startServer():
 		#Create a web server and define the handler to manage the
 		#incoming request
 		server = HTTPServer(('', PORT_NUMBER), injectionHandler)
-		print 'Started httpserver on port ' , PORT_NUMBER
+		print ('Started httpserver on port ' , PORT_NUMBER)
 		
 		#Wait forever for incoming htto requests
 		server.serve_forever()
 
 	except KeyboardInterrupt:
-		print '^C received, shutting down the web server'
+		print ('^C received, shutting down the web server')
 		server.socket.close()
 
 
