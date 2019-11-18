@@ -55,7 +55,7 @@ def startServer(url, port, payload):
 		#incoming request
 		handler = partial(injectionHandler,payload, url)
 		server = HTTPServer(('', port), handler)
-		print ('Started httpserver on port ' , PORT_NUMBER)
+		print ('Started httpserver on port ' , port)
 		
 		#Wait forever for incoming htto requests
 		server.serve_forever()
@@ -66,7 +66,7 @@ def startServer(url, port, payload):
 
 def main(args):
 	#start ngrok
-	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(PORT_NUMBER))
+	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args["port"]))
 	NgrokURL = lngrok.start()
 
 	print ("Public URL: " + NgrokURL)
