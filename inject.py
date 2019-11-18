@@ -68,13 +68,11 @@ def urlShortener(nurl):
 
 def startServer(url, port, payload):
 	try:
-		#Create a web server and define the handler to manage the
-		#incoming request
+		#Create a web server and define the handler to manage the incoming request
 		handler = partial(injectionHandler,payload, url)
 		server = HTTPServer(('', port), handler)
 		print ('Started httpserver on port ' , port)
-		
-		#Wait forever for incoming htto requests
+
 		server.serve_forever()
 
 	except KeyboardInterrupt:
