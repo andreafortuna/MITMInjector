@@ -47,7 +47,7 @@ class injectionHandler(BaseHTTPRequestHandler):
 def urlShortener(nurl):
 	url = 'http://tinyurl.com/api-create.php?url=' + nurl
 	r = urlopen(url).read() 
-	return str(r)
+	return str(r.decode())
 
 def startServer(url, port, payload):
 	try:
