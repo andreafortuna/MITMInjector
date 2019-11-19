@@ -60,8 +60,6 @@ class injectionHandler(BaseHTTPRequestHandler):
 			console.log('Service Worker functionality not supported.');
 			}
 
-
-
 			"""
 		if (self.payload != "None"):
 			payload = open("payloads/" + self.payload + ".js",'r').read()
