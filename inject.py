@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup	
 import os, subprocess
+
 from urllib.request import urlopen
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from multiprocessing import Process
@@ -121,18 +122,29 @@ def startServer(url, port, payload, worker):
 		server.socket.close()
 
 def main(args):
-	if (not args["payload"]) and (not args["worker"]):
+	if (args.payload is None) and (args.worker is None):
 		print ("Required Payload (-P) or Service Worker (-S)!")
 		return
+	else:
+		if args.payload is not None:
+			if not (os.path.exists("payloads/" + args.payload + ".js")):
+				print ("Payload \"%s\" not exists" % args.payload)
+				return
+		if args.worker is not None:
+			print ("Check worker")		
+			if not (os.path.exists("workers/" + args.worker + ".js")):
+				print ("Worker \"%s\" not exists" % args.worker)
+				return
+		
 
 	#start ngrok
-	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args["port"]))
+	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args.port))
 	NgrokURL = lngrok.start()
 
 	print ("Public URL: " + NgrokURL)
 	print ("Short URL: " + urlShortener(NgrokURL))
 
-	startServer(args["url"], args["port"], args["payload"], args["worker"])
+	startServer(args.url, args.port, args.payload, args.worker)
 
 if __name__ == '__main__':
 	version = "1.1.0"
@@ -147,13 +159,13 @@ if __name__ == '__main__':
 	Andrea Fortuna - andrea@andreafortuna.org - https://www.andreafortuna.org
 	""")
 
-	args = argparse.ArgumentParser()
-	args.add_argument("-u", "--url", required=True, help="Website to clone")
-	args.add_argument("-p", "--port", required=False, help="Local server port (default:8080)", default=8080)
-	args.add_argument("-P", "--payload", required=False, help="Payload")
-	args.add_argument("-W", "--worker", required=False, help="Web worker")
-
-	args = vars(args.parse_args())
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-u", "--url", required=True, help="Website to clone")
+	parser.add_argument("-p", "--port", required=False, help="Local server port (default:8080)", default=8080)
+	parser.add_argument("-P", "--payload", required=False, help="Payload")
+	parser.add_argument("-W", "--worker", required=False, help="Web worker")
+	args, leftovers = parser.parse_known_args()
+	#args = vars(args.parse_args())
 	main(args)
 
 
