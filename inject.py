@@ -27,7 +27,7 @@ def main(args):
 	#start ngrok
 	if args.ngrok:
 		if (os.path.exists("ngroktoken")):
-			authtoken = open("ngroktoken",'r').read()
+			authtoken = open("ngroktoken",'r').read().strip()
 			lngrok = ngrok(authtoken, str(args.port))
 			NgrokURL = lngrok.start()
 			print ("Public URL: " + NgrokURL)
