@@ -1,5 +1,7 @@
 # MITMInjector
 
+![screenshot](docs/screenshots.jpg)
+
 Simple MITM proxy with injection features.
 
 Initially designed for debugging purposes, during the development has turned into a tool useful for penetration testing, user tracking and social engineering assessment.
