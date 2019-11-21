@@ -22,3 +22,8 @@ WEBWORKER: Js webworker to inject into cloned page
 
 -s: Mask ngrok url using TinyUrl
 
+## Available payloads
+
+- formgrabber: dumps all data written by target into page forms
+- geocoding: track target position using browser geolocation
+- ipgeolocation: track target position using IP geolocation
