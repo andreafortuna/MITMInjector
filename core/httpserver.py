@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import base64
 
 class injectionHandler(BaseHTTPRequestHandler):
 	payload = ""
@@ -104,6 +105,7 @@ def startServer(url, port, payload, worker):
 		handler = partial(injectionHandler,payload, worker, url)
 		server = HTTPServer(('', port), handler)
 		print ('Started local server on http://127.0.0.1:' + str(port))
+		print ('Press ^C to stop the server...')
 		server.serve_forever()
 
 	except KeyboardInterrupt:

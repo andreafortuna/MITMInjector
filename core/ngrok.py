@@ -11,6 +11,9 @@ import json
 
 class ngrok(object):
     PORT = 8080
+
+    pNg = Process()
+
     def __init__(self, authtoken, port):
         if authtoken:
             self.token = authtoken
@@ -57,11 +60,15 @@ class ngrok(object):
             os.remove(filename)
         subprocess.check_output([str_ngrok, "authtoken", authtoken])                 
 
-    def start(self):
-        pNg = Process(target=self.start_ngrok,)
-        pNg.start()	
+    def start(self):    
+        self.pNg = Process(target=self.start_ngrok)    
+        self.pNg.start()	
         NgrokURL = self.getNgrokStats()
         return NgrokURL
+
+    def stop(self):
+        self.pNg.kill()
+
 
     def start_ngrok(self):
 	    subprocess.check_output(["./ngrok", "http", self.PORT])

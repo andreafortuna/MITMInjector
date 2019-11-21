@@ -25,6 +25,7 @@ def main(args):
 		
 
 	#start ngrok
+	lngrok = ""
 	if args.ngrok:
 		if (os.path.exists("ngroktoken")):
 			authtoken = open("ngroktoken",'r').read().strip()
@@ -36,7 +37,13 @@ def main(args):
 		else:
 			print ("ERROR: ngrok auth token not found! Please get your token from https://dashboard.ngrok.com/auth and save it into a file named ngroktoken.")
 			return
+	
 	core.httpserver.startServer(args.url, args.port, args.payload, args.worker)
+
+	if args.ngrok:
+		lngrok.stop()
+		print ('ngrok process killed.')
+
 
 if __name__ == '__main__':
 	version = "1.1.0"
