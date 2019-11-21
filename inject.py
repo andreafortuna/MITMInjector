@@ -141,12 +141,16 @@ def main(args):
 
 	#start ngrok
 	if args.ngrok:
-		lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args.port))
-		NgrokURL = lngrok.start()
-		print ("Public URL: " + NgrokURL)
-		if (args.shortner):
-			print ("Short URL: " + urlShortener(NgrokURL))
-
+		if (os.path.exists("ngroktoken")):
+			authtoken = open("ngroktoken",'r').read()
+			lngrok = ngrok(authtoken, str(args.port))
+			NgrokURL = lngrok.start()
+			print ("Public URL: " + NgrokURL)
+			if (args.shortner):
+				print ("Short URL: " + urlShortener(NgrokURL))
+		else:
+			print ("ERROR: ngrok auth token not found! Please get your token from https://dashboard.ngrok.com/auth and save it into a file named ngroktoken.")
+			return
 	startServer(args.url, args.port, args.payload, args.worker)
 
 if __name__ == '__main__':
