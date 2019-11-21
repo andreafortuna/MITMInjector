@@ -1,6 +1,6 @@
 # MITMInjector
 
-![screenshot](docs/screenshots.jpg)
+![screenshot](https://www.andreafortuna.org/wp-content/uploads/2019/11/MITMInject.jpg)
 
 Simple MITM proxy with injection features.
 
