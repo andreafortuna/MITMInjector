@@ -4,7 +4,6 @@ import subprocess
 import socket
 import os.path as path
 from multiprocessing import Process
-#from urllib.request import urlopen
 import urllib.request
 import zipfile
 import json 
