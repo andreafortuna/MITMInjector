@@ -163,7 +163,6 @@ if __name__ == '__main__':
 	parser.add_argument("-P", "--payload", required=False, help="Payload")
 	parser.add_argument("-W", "--worker", required=False, help="Web worker")
 	args, leftovers = parser.parse_known_args()
-	#args = vars(args.parse_args())
 	main(args)
 
 
