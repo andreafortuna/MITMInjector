@@ -37,7 +37,7 @@ def main(args):
 			print ("ERROR: ngrok auth token not found! Please get your token from https://dashboard.ngrok.com/auth and save it into a file named ngroktoken.")
 			return
 
-	core.httpserver.startServer(args.url, args.port, args.payload, args.worker)
+	core.httpserver.startServer(args.url, int(args.port), args.payload, args.worker)
 
 	if args.ngrok:
 		lngrok.stop()
