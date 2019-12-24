@@ -18,11 +18,10 @@ def main(args):
 				print ("Payload \"%s\" not exists" % args.payload)
 				return
 		if args.worker is not None:
-			print ("Check worker")		
+			print ("Check worker")
 			if not (os.path.exists("workers/" + args.worker + ".js")):
 				print ("Worker \"%s\" not exists" % args.worker)
 				return
-		
 
 	#start ngrok
 	lngrok = ""
@@ -37,7 +36,7 @@ def main(args):
 		else:
 			print ("ERROR: ngrok auth token not found! Please get your token from https://dashboard.ngrok.com/auth and save it into a file named ngroktoken.")
 			return
-	
+
 	core.httpserver.startServer(args.url, args.port, args.payload, args.worker)
 
 	if args.ngrok:
@@ -65,7 +64,6 @@ if __name__ == '__main__':
 	parser.add_argument("-W", "--worker", required=False, help="Web worker [EXPERIMENTAL]")
 	parser.add_argument("-n", "--ngrok", required=False, action='store_true', help="Export server with ngrok.com")
 	parser.add_argument("-s", "--shortner", required=False, action='store_true', help="Mask ngrok.com url with tinyurl")
-	
 
 	args, leftovers = parser.parse_known_args()
 	main(args)
