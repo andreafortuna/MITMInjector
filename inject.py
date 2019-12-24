@@ -42,7 +42,7 @@ def main(args):
 		port = int(os.environ.get('PORT', 17995))
 	else:
 		port = int(args.port)
-	core.httpserver.startServer(args.url, int(args.port), args.payload, args.worker)
+	core.httpserver.startServer(args.url, port, args.payload, args.worker)
 
 	if args.ngrok:
 		lngrok.stop()
