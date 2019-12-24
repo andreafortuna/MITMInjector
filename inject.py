@@ -36,7 +36,12 @@ def main(args):
 		else:
 			print ("ERROR: ngrok auth token not found! Please get your token from https://dashboard.ngrok.com/auth and save it into a file named ngroktoken.")
 			return
-
+	ON_HEROKU = os.environ.get('ON_HEROKU')
+	port = 8080
+	if ON_HEROKU:
+		port = int(os.environ.get('PORT', 17995))
+	else:
+		port = int(args.port)
 	core.httpserver.startServer(args.url, int(args.port), args.payload, args.worker)
 
 	if args.ngrok:
