@@ -103,7 +103,7 @@ def startServer(url, port, payload, worker):
 	try:
 		#Create a web server and define the handler to manage the incoming request
 		handler = partial(injectionHandler,payload, worker, url)
-		server = HTTPServer(('', port), handler)
+		server = HTTPServer(('0.0.0.0', port), handler)
 		print ('Started local server on http://127.0.0.1:' + str(port))
 		print ('Press ^C to stop the server...')
 		server.serve_forever()
