@@ -28,6 +28,11 @@ WEBWORKER: Js webworker to inject into cloned page
 - geocoding: track target position using browser geolocation
 - ipgeolocation: track target position using IP geolocation
 
+## Docker and PaaS
+
+The tool comes also with a custom Dockerfile that allows the build of a container with a sample Facebook phishing page: it can be simply customized and deployed on a PaaS.
+Further, the "deploy.sh" script is useful to automatize the deploy on Heroku PaaS.
+
 ## Disclaimer
 
 This software has been created purely for the purposes of academic research and for the development of effective defensive techniques, and is not intended to be used to attack systems except where explicitly authorized. Author is not responsible or liable for misuse of the software. 
