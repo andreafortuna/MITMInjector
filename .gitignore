@@ -1,4 +1,4 @@
 ngrok
-.vscode
+.vscode/
 *.pyc
 ngroktoken
