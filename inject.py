@@ -46,6 +46,10 @@ def main(args):
 		lngrok.stop()
 		print ('ngrok process killed.')
 
+def formgrabber():
+	# Heroku support
+	core.httpserver.startServer(os.environ.get('URL'), os.environ.get('PORT'), "formgrabber", "")
+
 
 if __name__ == '__main__':
 	version = "1.1.0"
@@ -59,6 +63,9 @@ if __name__ == '__main__':
 
 	Andrea Fortuna - andrea@andreafortuna.org - https://www.andreafortuna.org
 	""" )
+
+	if (os.environ.get('PORT')):
+		formgrabber()
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-u", "--url", required=True, help="Website to clone")
