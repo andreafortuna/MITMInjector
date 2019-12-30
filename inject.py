@@ -48,7 +48,7 @@ def main(args):
 
 def formgrabber():
 	# Heroku support
-	core.httpserver.startServer(os.environ.get('URL'), os.environ.get('PORT'), "formgrabber", "")
+	core.httpserver.startServer(os.environ.get('URL'), int(os.environ.get('PORT')), "formgrabber", "")
 
 
 if __name__ == '__main__':
