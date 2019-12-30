@@ -30,15 +30,14 @@ WEBWORKER: Js webworker to inject into cloned page
 
 ## Docker and PaaS
 
-The tool comes also with a custom Dockerfile that allows the build of a container with a sample Facebook phishing page: it can be simply customized and deployed on a PaaS.
-
-Further, the "deploy.sh" script is useful to automatize the deploy on Heroku PaaS.
-
 The tool comes also with a custom Dockerfile that allows the build of a container with a sample phishing page: it can be simply customized and deployed on a PaaS.
 
 Further, the “deploy.sh” script is useful to automatize the deploy on Heroku PaaS, passing as argument the url to “clone” (it needs the heroku cli client installed and configured):
 
-```$ ./deploy.sh https://www.facebook.com
+```
+$ ./deploy.sh https://www.facebook.com
+
+```
 
 ## Disclaimer
 
